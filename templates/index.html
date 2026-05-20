@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Gestor de Biblioteca</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container mt-4">
+        <div class="text-center mb-4">
+            <h1 class="display-6 fw-bold text-primary">🏛️ Sistema Gestor de Biblioteca</h1>
+            <p class="text-muted">Motor de Inferencia Multiparadigma (Python + SQL + LISP + Prolog)</p>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-5">
+                
+                {% if error %}
+                <div class="alert alert-danger shadow-sm text-center fw-bold">{{ error }}</div>
+                {% endif %}
+                {% if exito %}
+                <div class="alert alert-success shadow-sm text-center fw-bold">{{ exito }}</div>
+                {% endif %}
+
+                <div class="card shadow-sm mb-3 border-secondary">
+                    <div class="card-header bg-secondary text-white fw-bold">
+                        👤 Registrar Nuevo Usuario
+                    </div>
+                    <div class="card-body">
+                        <form method="POST" action="/registrar">
+                            <div class="mb-3">
+                                <label for="nuevo_nombre" class="form-label">Nombre del nuevo lector:</label>
+                                <input type="text" class="form-control" id="nuevo_nombre" name="nuevo_nombre" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="libro_leido" class="form-label">¿Qué libro ya leyó y le gustó?</label>
+                               <select class="form-select" id="libros_leidos" name="libros_leidos" multiple required size="5">
+                                    {% for libro in catalogo %}
+                                        <option value="{{ libro[0] }}">{{ libro[1] }} ({{ libro[2] }})</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-secondary w-100 fw-bold">Registrar en el Sistema</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm mb-4 border-primary">
+                    <div class="card-header bg-primary text-white fw-bold">
+                        🧠 Consulta al Motor Lógico
+                    </div>
+                    <div class="card-body">
+                        <form method="POST" action="/">
+                            <div class="mb-3">
+                                <label for="usuario" class="form-label">Nombre del Usuario a consultar:</label>
+                                <input type="text" class="form-control text-center" id="usuario" name="usuario" value="{{ usuario_consultado or 'Miguel' }}" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100 fw-bold">Obtener Recomendaciones</button>
+                        </form>
+                    </div>
+                </div>
+
+                {% if recomendaciones %}
+                <div class="card shadow-sm border-success mb-4">
+                    <div class="card-header bg-success text-white fw-bold">
+                        ✨ Recomendaciones para {{ usuario_consultado }}
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        {% for libro in recomendaciones %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <strong>📖 {{ libro }}</strong>
+                                <span class="badge bg-success rounded-pill">Sugerido por Prolog</span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="col-md-7">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-dark text-white fw-bold">
+                        📚 Catálogo General (En vivo desde PostgreSQL)
+                    </div>
+                    <div class="card-body p-0">
+                        <table class="table table-hover mb-0 text-center align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Título</th>
+                                    <th>Autor</th>
+                                    <th>Categoría</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for libro in catalogo %}
+                                <tr>
+                                    <td class="text-start fw-bold">{{ libro[1] }}</td>
+                                    <td>{{ libro[2] }}</td>
+                                    <td><span class="badge bg-secondary">{{ libro[3] }}</span></td>
+                                    <td>
+                                        {% if libro[4] %}
+                                            <span class="badge bg-success">En Sala</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">Prestado</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
